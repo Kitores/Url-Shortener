@@ -27,6 +27,26 @@ jobs:
       uses: actions/setup-go@v4
       with:    
         go-version: '1.22.1'
+    - name: Setup PostgreSQL
+      uses: tj-actions/install-postgresql@v3
+      with:
+        postgresql-version: 16
+        
+    - name: Start PostgreSQL service
+      run: sudo systemctl start postgresql
+      
+    - name: Run SQL scripts
+      env:
+        PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}  
+      run: |
+        sudo -u postgres psql -c "CREATE DATABASE urls;"
+        sudo -u postgres psql urls < db/schema.sql        
+    - name: Test PostgreSQL connection
+      env:
+        PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      run: |  
+        sudo -u postgres psql -c "\l"
+        sudo -u postgres psql urls -c "SELECT * FROM urls;"
     - name: Build app
       run: |
         go mod download
