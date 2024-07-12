@@ -39,14 +39,14 @@ jobs:
       env:
         PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}  
       run: |
-        sudo -u postgres psql -c "CREATE DATABASE urls;"
-        sudo -u postgres psql urls < db/schema.sql        
+        sudo -u postgres psql -c "CREATE DATABASE app;"
+        sudo -u postgres psql app < db/schema.sql        
     - name: Test PostgreSQL connection
       env:
         PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |  
         sudo -u postgres psql -c "\l"
-        sudo -u postgres psql urls -c "SELECT * FROM urls;"
+        sudo -u postgres psql app -c "SELECT * FROM app;"
     - name: Build app
       run: |
         go mod download
