@@ -7,12 +7,13 @@ import (
 	"JustTesting/internal/http-server/handlers/deleteRange"
 	"JustTesting/internal/http-server/handlers/redirect"
 	"JustTesting/internal/http-server/handlers/url/save"
-	"JustTesting/internal/http-server/middleware/logger"
+	mwLogger "JustTesting/internal/http-server/middleware/logger"
 	"JustTesting/internal/lib/logger/sl"
 	"JustTesting/internal/storage/postgreSql"
 	"context"
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"log/slog"
 	"net/http"
 	"os"
@@ -36,24 +37,24 @@ func main() {
 	connStr := "host=localhost port=5432 user=postgres password=angelo4ek dbname=test1 sslmode=disable"
 	storage, err := postgreSql.NewPG(connStr)
 	if err != nil {
-		fmt.Errorf("Failed to initialize storage: %v", sl.Err(err))
+		log.Error("Failed to initialize storage: %v", sl.Err(err))
 		os.Exit(1)
 	}
 	fmt.Println(storage)
 
 	router := chi.NewRouter()
-	//router.Use(middleware.Logger)
-	router.Use(logger.New(log))
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
+	router.Use(mwLogger.New(log))
 	router.Route("/url", func(r chi.Router) {
-		//r.Use(middleware.BasicAuth("url-shortener", map[string]string{
-		//	cfg.HTTPServer.User: cfg.HTTPServer.Password,
-		//}))
+		r.Use(middleware.BasicAuth("url-shortener", map[string]string{
+			cfg.HTTPServer.User: cfg.HTTPServer.Password,
+		}))
 		r.Post("/", save.New(log, storage))
 		r.Delete("/deleteRange", deleteRange.New(log, storage))
 		r.Delete("/delete", delete.New(log, storage))
 	})
-	//router.Use(middleware.Recoverer)
-	//router.Use(middleware.URLFormat)
 
 	router.Get("/getalias", get.New(log, storage))
 
