@@ -46,7 +46,7 @@ jobs:
         PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |  
         sudo -u postgres psql -c "\l"
-        sudo -u postgres psql app -c "SELECT * FROM app;"
+        sudo -u postgres psql app -c "SELECT * FROM urls;"
     - name: Build app
       run: |
         go mod download
