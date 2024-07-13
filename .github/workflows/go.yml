@@ -40,7 +40,7 @@ jobs:
         PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}  
       run: |
         sudo -u postgres psql -c "CREATE DATABASE app;"
-        sudo -u postgres psql app < db/schema.sql        
+        sudo -u postgres psql app < database/schema.sql        
     - name: Test PostgreSQL connection
       env:
         PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
