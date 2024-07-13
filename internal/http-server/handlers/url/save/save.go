@@ -25,8 +25,6 @@ type Response struct {
 // TODO: move to config
 const aliasLength = 6
 
-//go:generate go run github.com/vektra/mockery/v2@v2.31.0 --name=URLSaver
-
 type URLSaver interface {
 	SaveURL(urlToSave string, alias string) (err error)
 }
@@ -46,7 +44,6 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 		}
 		log.Info("Request body decoded", slog.Any("request", req))
 
-		//TODO: Use function ValidationErrors() from lib/api/response/response.go
 		if err := validator.New().Struct(req); err != nil {
 			validateErr := err.(validator.ValidationErrors)
 			log.Error("failed to validate struct request", sl.Err(err))

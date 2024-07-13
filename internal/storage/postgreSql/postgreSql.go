@@ -10,16 +10,10 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
+	"log"
 	"sync"
 )
 
-//	type Client interface {
-//		BeginTx(ctx context.Context, txOptions pgx.TxOptions) (pgx.Tx, error)
-//		Begin(ctx context.Context) (pgx.Tx, error)
-//		Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
-//		Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
-//		QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
-//	}
 type PostgreSqlx struct {
 	db *sqlx.DB
 }
@@ -45,6 +39,9 @@ func NewPG(connString string) (*PostgreSqlx, error) {
 			fmt.Errorf("unable to create conection pool: %w", err)
 		}
 		pgInstance = &PostgreSqlx{db: db}
+		if pgInstance.db == nil {
+			log.Fatal("unable to create connection")
+		}
 		fmt.Println(pgInstance)
 	})
 	return pgInstance, nil
@@ -122,14 +119,6 @@ func InitStorage() (*Storage, error) {
 	return &Storage{db: db}, nil
 }
 
-func Insert(strg *Postgres) {
-	var err error
-	//insertStmt := `INSERT INTO urls (alias, url) VALUES ($2, $3)`
-	_, err = strg.db.Exec(context.Background(), `INSERT INTO urls(alias, url) VALUES('mart','Julia')`)
-	if err != nil {
-		fmt.Println(err)
-	}
-}
 func (pg *PostgreSqlx) Delete(url string) error {
 	functionName := "storage/postgreSql/Delete()"
 	var err error

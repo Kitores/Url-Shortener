@@ -31,28 +31,15 @@ func main() {
 
 	log.Info("starting server", slog.String("env", cfg.Env))
 	log.Debug("Debug logging enabled")
-	//fmt.Println(cfg)
-	// TODO: init config: cleanenv   DONE!
 
-	// TODO: init logger: slog		 DONE!
-
-	// TODO: init storage: postgressql
-	//storage, err := postgreSql.InitStorage()
 	//connString := "postgres://postgres:angelo4ek@localhost:5432/test1?sslmode=disable"
 	connStr := "host=localhost port=5432 user=postgres password=angelo4ek dbname=test1 sslmode=disable"
 	storage, err := postgreSql.NewPG(connStr)
-	//storage, err := postgreSql.New(cfg.StoragePath)
 	if err != nil {
 		fmt.Errorf("Failed to initialize storage: %v", sl.Err(err))
 		os.Exit(1)
 	}
 	fmt.Println(storage)
-
-	//postgreSql.Update(storage)
-
-	//postgreSql.Insert(storage)
-
-	//TODO: init router: chi, chi/render
 
 	router := chi.NewRouter()
 	//router.Use(middleware.Logger)
@@ -85,22 +72,18 @@ func main() {
 		log.Error("Failed to start server", sl.Err(err))
 	}
 	log.Error("failed to start server", sl.Err(srv.Shutdown(context.Background())))
-
-	//http.Handle("/", save.New(log, storage))
-
-	//http.ListenAndServe(":8080", nil)
-
-	// TODO: run server
 }
+
 func setupLogger(env string) *slog.Logger {
 	var log *slog.Logger
 	switch env {
 	case envLocal:
-		fmt.Println("llobsterbig")
+
 		log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	case envDev:
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	case envProd:
+
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	}
 	return log

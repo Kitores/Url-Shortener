@@ -8,9 +8,8 @@ import (
 )
 
 type Config struct {
-	Env         string `yaml:"env" env-default:"local"`
-	StoragePath string `yaml:"storage_path" env-required:"true"`
-	HTTPServer  `yaml:"http_server" env-required:"true"`
+	Env        string `yaml:"env" env-default:"local"`
+	HTTPServer `yaml:"http_server" env-required:"true"`
 }
 
 type HTTPServer struct {
@@ -22,19 +21,7 @@ type HTTPServer struct {
 }
 
 func MustLoad() *Config {
-	// Указываем путь к файлу конфигурации
-	//var configPath string
-	//flag.StringVar(&configPath, "config", "", "path to config file")
-	//flag.Parse()
-	configPath := "./config/local.yaml"
-
-	// Чтение содержимого  файла конфигурации
-	//Path, err := os.ReadFile(configPath)
-	//configPath = string(Path)
-	//if err != nil {
-	//	log.Fatal("Ошибка чтения файла конфигурации:", err)
-	//}
-	//configPath := os.Getenv("CONFIG_PATH")
+	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
 		log.Fatal("CONFIG_PATH environment variable not set")
 	}

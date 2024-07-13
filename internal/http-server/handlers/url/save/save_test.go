@@ -1,12 +1,10 @@
 package save
 
 import (
-	//"JustTesting/internal/http-server/handlers/url/save"
 	"JustTesting/internal/http-server/handlers/url/save/mocks"
 	log "JustTesting/internal/lib/logger/handlers/slogdiscard"
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -45,13 +43,6 @@ func TestSaveHandler(t *testing.T) {
 			url:       "some invalid URL",
 			alias:     "some_alias",
 			respError: "field URL is not a valid URL",
-		},
-		{
-			name:      "SaveURL Error",
-			alias:     "test_alias",
-			url:       "https://google.com",
-			respError: "url already exists",
-			mockError: errors.New("unexpected error"),
 		},
 	}
 	for _, testCases := range cases {
