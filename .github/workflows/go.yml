@@ -59,9 +59,7 @@ jobs:
         echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key.pem
         chmod 600 ~/.ssh/deploy_key.pem
         ssh-keyscan -H ${{ env.HOST }} >> ~/.ssh/known_hosts
-        
         sudo apt-get install -y ssh rsync
-
         ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mkdir -p ${{ env.DEPLOY_DIRECTORY }}"
         rsync -avz -e 'ssh -i deploy_key.pem -o StrictHostKeyChecking=no' --exclude='.git' ./ ${{ env.HOST }}:${{ env.DEPLOY_DIRECTORY }}
     - name: Remove old systemd service file
