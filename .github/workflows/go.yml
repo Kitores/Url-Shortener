@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HOST: mihail@192.168.1.221
-      DEPLOY_DIRECTORY: /root/apps/url-shortener
-      CONFIG_PATH: /root/apps/url-shortener/config/prod.yaml
-      ENV_FILE_PATH: /root/apps/url-shortener/config.env
+      DEPLOY_DIRECTORY: /mihail/apps/url-shortener
+      CONFIG_PATH: /mihail/apps/url-shortener/config/prod.yaml
+      ENV_FILE_PATH: /mihail/apps/url-shortener/config.env
       DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
 
       
