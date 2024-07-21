@@ -33,8 +33,9 @@ func main() {
 	log.Info("starting server", slog.String("env", cfg.Env))
 	log.Debug("Debug logging enabled")
 
+	//TODO: Update connStr, prod.yaml, get http_server_pass from ghSecrets
 	//connString := "postgres://postgres:angelo4ek@localhost:5432/test1?sslmode=disable"
-	connStr := "host=185.91.52.22 port=5432 user=postgres password=angelo4ek dbname=app sslmode=disable"
+	connStr := "host=localhost port=5432 user=postgres password=angelo4ek dbname=test1 sslmode=disable"
 	storage, err := postgreSql.NewPG(connStr)
 	if err != nil {
 		log.Error("Failed to initialize storage: %v", sl.Err(err))

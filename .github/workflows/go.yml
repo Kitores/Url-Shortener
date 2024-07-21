@@ -14,10 +14,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      HOST: root@185.91.52.22
-      DEPLOY_DIRECTORY: /root/apps/url-shortener
-      CONFIG_PATH: /root/apps/url-shortener/config/prod.yaml
-      ENV_FILE_PATH: /root/apps/url-shortener/config.env
+      HOST: root@192.168.1.221
+      DEPLOY_DIRECTORY: /mihail/apps/url-shortener
+      CONFIG_PATH: /mihail/apps/url-shortener/config/prod.yaml
+      ENV_FILE_PATH: /mihail/apps/url-shortener/config.env
       DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
 
       
@@ -52,13 +52,15 @@ jobs:
       run: |
         go mod download
         go build -o url-shortener ./cmd/url-shortener
-    - name: Deploy to VM
+    - name: Set up SSH
       run: |
-          sudo apt-get install -y ssh rsync
-          echo "$DEPLOY_SSH_KEY" > deploy_key.pem
-          chmod 600 deploy_key.pem
-          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mkdir -p ${{ env.DEPLOY_DIRECTORY }}"
-          rsync -avz -e 'ssh -i deploy_key.pem -o StrictHostKeyChecking=no' --exclude='.git' ./ ${{ env.HOST }}:${{ env.DEPLOY_DIRECTORY }}
+        mkdir -p ~/.ssh
+        echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key.pem
+        chmod 600 ~/.ssh/deploy_key.pem
+        ssh-keyscan -H ${{ env.HOST }} >> ~/.ssh/known_hosts
+        sudo apt-get install -y ssh rsync
+        ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mkdir -p ${{ env.DEPLOY_DIRECTORY }}"
+        rsync -avz -e 'ssh -i deploy_key.pem -o StrictHostKeyChecking=no' --exclude='.git' ./ ${{ env.HOST }}:${{ env.DEPLOY_DIRECTORY }}
     - name: Remove old systemd service file
       run: |
         ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "rm -f /etc/systemd/system/url-shortener.service"
